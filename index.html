@@ -7,38 +7,52 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #1a1a18; --concrete: #e8e4dc; --steel: #3d5a6e; --amber: #e8a020;
+    --ink: #1a1a18; --steel: #3d5a6e; --amber: #e8a020;
     --rust: #c0440a; --chalk: #f5f2ea; --mist: #b8c4cc; --page-bg: #f0ece2;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--page-bg); color:var(--ink); font-family:'DM Sans',sans-serif; font-weight:300; line-height:1.65; min-height:100vh; }
 
+  /* COVER */
   .cover { background:var(--ink); color:var(--chalk); min-height:100vh; display:flex; flex-direction:column; justify-content:space-between; padding:3rem 3.5rem 2.5rem; position:relative; overflow:hidden; }
   .cover::before { content:''; position:absolute; top:0; right:0; width:45%; height:100%; background:repeating-linear-gradient(-55deg,transparent,transparent 18px,rgba(232,160,32,0.07) 18px,rgba(232,160,32,0.07) 19px); pointer-events:none; }
   .cover::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:5px; background:linear-gradient(90deg,var(--amber),var(--rust)); }
-  .cover-tag { font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--amber); opacity:0.9; }
+  .cover-tag { font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--amber); }
   .cover-main h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(3.5rem,9vw,7.5rem); letter-spacing:0.02em; line-height:0.92; color:var(--chalk); }
   .cover-main h1 span { color:var(--amber); }
-  .cover-subtitle { font-size:1rem; font-weight:400; color:var(--mist); margin-top:1.5rem; max-width:420px; letter-spacing:0.01em; }
+  .cover-subtitle { font-size:1rem; font-weight:400; color:var(--mist); margin-top:1.5rem; max-width:420px; }
   .cover-meta { display:flex; gap:2.5rem; align-items:flex-end; flex-wrap:wrap; }
   .cover-meta-item label { display:block; font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--amber); margin-bottom:0.35rem; }
   .cover-meta-item input { background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.25); color:var(--chalk); font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:300; padding:0.2rem 0; width:180px; outline:none; transition:border-color 0.2s; }
   .cover-meta-item input:focus { border-bottom-color:var(--amber); }
   .section-count { font-family:'DM Mono',monospace; font-size:0.65rem; color:rgba(255,255,255,0.3); letter-spacing:0.1em; }
 
-  .register-banner { background:var(--amber); color:var(--ink); padding:0.7rem 3.5rem; display:flex; align-items:center; gap:1rem; font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; }
-  .register-banner span { opacity:0.6; }
+  /* STATUS BANNER */
+  .status-banner { background:var(--amber); color:var(--ink); padding:0.7rem 3.5rem; display:flex; align-items:center; gap:1rem; font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.1em; }
+  .status-banner span { opacity:0.6; }
   #regStatus.ok { font-weight:600; }
 
+  /* NAV */
   .toc-strip { background:var(--steel); color:var(--chalk); padding:0 3.5rem; display:flex; gap:0; overflow-x:auto; scrollbar-width:none; position:sticky; top:0; z-index:100; }
   .toc-strip::-webkit-scrollbar { display:none; }
   .toc-item { display:flex; align-items:center; gap:0.5rem; padding:0.8rem 1.2rem; font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; white-space:nowrap; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; color:var(--mist); text-decoration:none; }
   .toc-item:hover,.toc-item.active { color:var(--amber); border-bottom-color:var(--amber); }
+  .toc-item.locked { opacity:0.3; pointer-events:none; }
   .toc-num { opacity:0.5; font-size:0.58rem; }
 
+  /* WORKBOOK */
   .workbook { max-width:900px; margin:0 auto; padding:3rem 2.5rem 5rem; }
-  .ws { margin-bottom:3.5rem; scroll-margin-top:3rem; opacity:0; transform:translateY(20px); transition:opacity 0.5s ease,transform 0.5s ease; }
-  .ws.visible { opacity:1; transform:translateY(0); }
+
+  /* SECTION */
+  .ws { margin-bottom:3.5rem; scroll-margin-top:3rem; }
+  .ws[data-locked="true"] { display:none; }
+  .ws.unlocking { animation: sectionReveal 0.6s ease forwards; }
+  @keyframes sectionReveal {
+    from { opacity:0; transform:translateY(24px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .ws.visible { opacity:1; }
+
   .ws-header { display:flex; align-items:flex-start; gap:1.2rem; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid rgba(61,90,110,0.2); }
   .ws-num { font-family:'Bebas Neue',sans-serif; font-size:3.5rem; color:var(--amber); line-height:1; min-width:3rem; opacity:0.7; }
   .ws-label { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--rust); margin-bottom:0.2rem; }
@@ -47,34 +61,44 @@
   .ws-complete-badge.show { display:flex; }
   .ws-complete-badge::before { content:'✓'; font-weight:700; }
 
-  .exercise-block { background:white; border-left:3px solid var(--amber); padding:1.5rem 1.8rem; margin-bottom:1.2rem; position:relative; }
+  /* UNLOCK NUDGE — shown at bottom of current section when ready to unlock next */
+  .unlock-nudge { display:none; align-items:center; gap:0.75rem; background:rgba(232,160,32,0.1); border:1px solid rgba(232,160,32,0.3); padding:0.8rem 1.2rem; margin-top:1rem; font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; color:var(--amber); animation: nudgePulse 2s ease infinite; }
+  .unlock-nudge.show { display:flex; }
+  @keyframes nudgePulse { 0%,100%{opacity:1;} 50%{opacity:0.6;} }
+
+  /* BLOCKS */
+  .exercise-block { background:white; border-left:3px solid var(--amber); padding:1.5rem 1.8rem; margin-bottom:1.2rem; }
   .block-label { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--amber); margin-bottom:0.75rem; }
   .exercise-block p { font-size:0.92rem; color:var(--ink); margin-bottom:0.85rem; font-weight:400; }
   .reflection-block { background:rgba(61,90,110,0.06); border-left:3px solid var(--steel); padding:1.2rem 1.5rem; margin-bottom:1.2rem; }
   .reflection-block .block-label { color:var(--steel); }
   .reflection-block p { font-size:0.88rem; color:var(--steel); font-style:italic; margin-bottom:0.6rem; font-weight:300; }
 
+  /* INPUTS */
   .field-line { display:flex; align-items:flex-end; gap:0.5rem; margin-bottom:0.75rem; }
-  .field-line label { font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; color:#888; white-space:nowrap; min-width:fit-content; }
-  input[type="text"],textarea { background:transparent; border:none; border-bottom:1px solid rgba(0,0,0,0.18); color:var(--ink); font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:400; padding:0.2rem 0.3rem; outline:none; width:100%; transition:border-color 0.2s; resize:none; }
-  input[type="text"]:focus,textarea:focus { border-bottom-color:var(--amber); }
+  .field-line label { font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; color:#888; white-space:nowrap; }
+  input[type="text"], textarea { background:transparent; border:none; border-bottom:1px solid rgba(0,0,0,0.18); color:var(--ink); font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:400; padding:0.2rem 0.3rem; outline:none; width:100%; transition:border-color 0.2s; resize:none; }
+  input[type="text"]:focus, textarea:focus { border-bottom-color:var(--amber); }
   textarea { border:1px solid rgba(0,0,0,0.12); padding:0.6rem 0.8rem; min-height:70px; background:rgba(255,255,255,0.5); margin-top:0.4rem; }
 
+  /* MATRIX */
   .matrix-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:rgba(0,0,0,0.1); border:1px solid rgba(0,0,0,0.1); margin-top:0.5rem; }
   .matrix-cell { background:white; padding:1rem 1.2rem; }
   .matrix-cell.highlight { background:rgba(232,160,32,0.06); }
   .matrix-cell-title { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.4rem; }
-  .matrix-cell-title .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
   .dot-amber{background:var(--amber);} .dot-steel{background:var(--steel);} .dot-rust{background:var(--rust);} .dot-mist{background:var(--mist);}
-  .axis-label { font-family:'DM Mono',monospace; font-size:0.58rem; letter-spacing:0.1em; color:#aaa; text-align:center; margin-top:0.5rem; }
   .axis-row { display:flex; justify-content:space-between; padding:0 0.5rem; }
+  .axis-label { font-family:'DM Mono',monospace; font-size:0.58rem; letter-spacing:0.1em; color:#aaa; text-align:center; margin-top:0.5rem; }
 
-  .before-after { display:grid; grid-template-columns:1fr auto 1fr; gap:0; align-items:stretch; }
+  /* BEFORE/AFTER */
+  .before-after { display:grid; grid-template-columns:1fr auto 1fr; align-items:stretch; }
   .ba-col { background:white; padding:1.2rem 1.5rem; }
   .ba-col.after { background:rgba(61,90,110,0.05); }
   .ba-divider { display:flex; align-items:center; justify-content:center; padding:0 0.8rem; background:white; font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--amber); border-top:1px solid rgba(0,0,0,0.08); border-bottom:1px solid rgba(0,0,0,0.08); }
   .ba-col-label { font-family:'DM Mono',monospace; font-size:0.58rem; letter-spacing:0.16em; text-transform:uppercase; color:#aaa; margin-bottom:0.6rem; }
 
+  /* PROMPT */
   .prompt-pair { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:rgba(0,0,0,0.08); border:1px solid rgba(0,0,0,0.08); margin-bottom:1rem; }
   .prompt-box { background:white; padding:1.2rem 1.5rem; }
   .prompt-box.strong { background:rgba(61,90,110,0.05); }
@@ -83,15 +107,18 @@
   .formula-banner { background:var(--steel); color:var(--chalk); padding:0.9rem 1.5rem; margin-bottom:1.2rem; font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.08em; display:flex; align-items:center; gap:1rem; }
   .formula-banner span{color:var(--amber);}
 
+  /* AI SCENARIO */
   .ai-scenario { background:var(--ink); color:var(--chalk); padding:1.2rem 1.5rem; margin-bottom:1rem; }
   .ai-scenario::before { content:'AI SYSTEM'; font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.2em; color:var(--amber); display:block; margin-bottom:0.5rem; }
   .ai-scenario p { font-size:0.88rem; line-height:1.55; font-style:italic; }
 
+  /* CHECKLIST */
   .check-list { list-style:none; margin-top:0.5rem; }
   .check-list li { display:flex; align-items:center; gap:0.75rem; padding:0.5rem 0; border-bottom:1px solid rgba(0,0,0,0.06); font-size:0.88rem; }
   .check-list li input[type="checkbox"] { width:15px; height:15px; accent-color:var(--amber); flex-shrink:0; cursor:pointer; }
   .check-list li .answer-field { flex:1; border:none; border-bottom:1px solid rgba(0,0,0,0.15); font-size:0.82rem; padding:0.1rem 0.3rem; background:transparent; color:var(--ink); font-family:'DM Sans',sans-serif; }
 
+  /* AI/NOT AI */
   .scenario-list { list-style:none; margin-top:0.4rem; }
   .scenario-list li { display:grid; grid-template-columns:1fr auto; align-items:center; gap:0.75rem; padding:0.6rem 0; border-bottom:1px solid rgba(0,0,0,0.07); font-size:0.86rem; }
   .toggle-group { display:flex; gap:0.4rem; }
@@ -99,22 +126,26 @@
   .toggle-btn.selected-ai { background:var(--steel); color:white; border-color:var(--steel); }
   .toggle-btn.selected-not { background:var(--rust); color:white; border-color:var(--rust); }
 
+  /* ACTION PLAN */
   .action-row { display:grid; grid-template-columns:auto 1fr; gap:1rem; align-items:flex-start; padding:0.85rem 0; border-bottom:1px solid rgba(0,0,0,0.07); }
   .action-tag { font-family:'DM Mono',monospace; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; background:var(--amber); color:var(--ink); padding:0.25rem 0.5rem; white-space:nowrap; font-weight:500; }
   .action-tag.team{background:var(--steel);color:white;} .action-tag.res{background:var(--rust);color:white;}
 
+  /* CLOSING */
   .closing-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-top:0.5rem; }
   .closing-card { background:white; padding:1.5rem; border-top:3px solid var(--amber); text-align:center; }
   .closing-card.commit { border-top-color:var(--steel); }
   .closing-card p { font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:#aaa; margin-bottom:0.8rem; }
   .closing-card input { text-align:center; font-size:1.1rem; font-weight:500; border:none; border-bottom:2px solid rgba(0,0,0,0.12); padding:0.4rem 0; }
 
+  /* PROGRESS BAR */
   .progress-bar-wrap { position:fixed; top:0; left:0; width:100%; height:3px; background:rgba(0,0,0,0.1); z-index:999; }
-  .progress-bar { height:100%; background:linear-gradient(90deg,var(--amber),var(--rust)); width:0%; transition:width 0.1s; }
+  .progress-bar { height:100%; background:linear-gradient(90deg,var(--amber),var(--rust)); width:0%; transition:width 0.3s; }
+
   .divider { height:1px; background:linear-gradient(90deg,var(--amber),transparent); margin:2rem 0; opacity:0.3; }
 
   @media(max-width:600px){
-    .workbook{padding:1.5rem 1rem 3rem;} .cover{padding:2rem 1.5rem;} .register-banner{padding:0.7rem 1.5rem;}
+    .workbook{padding:1.5rem 1rem 3rem;} .cover{padding:2rem 1.5rem;} .status-banner{padding:0.7rem 1.5rem;}
     .before-after{grid-template-columns:1fr;} .ba-divider{padding:0.5rem;}
     .prompt-pair{grid-template-columns:1fr;} .matrix-grid{grid-template-columns:1fr;}
     .closing-grid{grid-template-columns:1fr;} .ws-num{font-size:2.5rem;}
@@ -124,6 +155,7 @@
 <body>
 <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
 
+<!-- COVER -->
 <div class="cover">
   <div><div class="cover-tag">Participant Workbook · 2026</div></div>
   <div class="cover-main">
@@ -140,32 +172,64 @@
   </div>
 </div>
 
-<div class="register-banner">
-  <span>TRACKING STATUS →</span>
-  <span id="regStatus">Enter your name above to register with the facilitator dashboard</span>
+<!-- STATUS BANNER -->
+<div class="status-banner">
+  <span>STATUS →</span>
+  <span id="regStatus">Enter your name above to begin — sections unlock as you complete each one</span>
 </div>
 
-<nav class="toc-strip">
-  <a class="toc-item" href="#s1"><span class="toc-num">01</span> Icebreaker</a>
-  <a class="toc-item" href="#s2"><span class="toc-num">02</span> What is AI?</a>
-  <a class="toc-item" href="#s3"><span class="toc-num">03</span> AI in Daily Life</a>
-  <a class="toc-item" href="#s4"><span class="toc-num">04</span> Opportunity Mapping</a>
-  <a class="toc-item" href="#s5"><span class="toc-num">05</span> Workflow Redesign</a>
-  <a class="toc-item" href="#s6"><span class="toc-num">06</span> Prompt Engineering</a>
-  <a class="toc-item" href="#s7"><span class="toc-num">07</span> Leadership Alignment</a>
-  <a class="toc-item" href="#s8"><span class="toc-num">08</span> Action Planning</a>
-  <a class="toc-item" href="#s9"><span class="toc-num">09</span> Closing</a>
+<!-- TOC -->
+<nav class="toc-strip" id="tocStrip">
+  <a class="toc-item" href="#s1" id="toc-s1"><span class="toc-num">01</span> Icebreaker</a>
+  <a class="toc-item locked" href="#s2" id="toc-s2"><span class="toc-num">02</span> What is AI?</a>
+  <a class="toc-item locked" href="#s3" id="toc-s3"><span class="toc-num">03</span> AI in Daily Life</a>
+  <a class="toc-item locked" href="#s4" id="toc-s4"><span class="toc-num">04</span> Opportunity Mapping</a>
+  <a class="toc-item locked" href="#s5" id="toc-s5"><span class="toc-num">05</span> Workflow Redesign</a>
+  <a class="toc-item locked" href="#s6" id="toc-s6"><span class="toc-num">06</span> Prompt Engineering</a>
+  <a class="toc-item locked" href="#s7" id="toc-s7"><span class="toc-num">07</span> Leadership Alignment</a>
+  <a class="toc-item locked" href="#s8" id="toc-s8"><span class="toc-num">08</span> Action Planning</a>
+  <a class="toc-item locked" href="#s9" id="toc-s9"><span class="toc-num">09</span> Closing</a>
 </nav>
 
 <main class="workbook">
 
-  <section class="ws" id="s1"><div class="ws-header"><div class="ws-num">01</div><div class="ws-title-block"><div class="ws-label">Section One</div><div class="ws-title">Icebreaker</div><div class="ws-complete-badge" id="badge-s1">Section completed</div></div></div>
-    <div class="exercise-block"><div class="block-label">⬡ Exercise</div><p>Write the <strong>first word</strong> that comes to mind when you hear <em>"AI."</em></p><div class="field-line"><label>MY WORD →</label><input type="text" id="s1_word" data-track="s1" placeholder="Type your first instinct..."></div></div>
-    <div class="reflection-block"><div class="block-label">◎ Reflection</div><p>What does this word reveal about your current perception of AI?</p><textarea id="s1_reflection" data-track="s1" placeholder="Write your thoughts here..."></textarea></div>
-  </section><div class="divider"></div>
+  <!-- S1: ICEBREAKER — always unlocked -->
+  <section class="ws visible" id="s1" data-section="1" data-locked="false">
+    <div class="ws-header">
+      <div class="ws-num">01</div>
+      <div class="ws-title-block">
+        <div class="ws-label">Section One</div>
+        <div class="ws-title">Icebreaker</div>
+        <div class="ws-complete-badge" id="badge-s1">Section completed</div>
+      </div>
+    </div>
+    <div class="exercise-block">
+      <div class="block-label">⬡ Exercise</div>
+      <p>Write the <strong>first word</strong> that comes to mind when you hear <em>"AI."</em></p>
+      <div class="field-line"><label>MY WORD →</label><input type="text" id="s1_word" data-track="s1" placeholder="Type your first instinct..."></div>
+    </div>
+    <div class="reflection-block">
+      <div class="block-label">◎ Reflection</div>
+      <p>What does this word reveal about your current perception of AI?</p>
+      <textarea id="s1_reflection" data-track="s1" placeholder="Write your thoughts here..."></textarea>
+    </div>
+    <div class="unlock-nudge" id="nudge-s1">⬡ Great — Section 2 is now unlocked. Scroll down to continue.</div>
+  </section>
+  <div class="divider" id="div-s1" style="display:none;"></div>
 
-  <section class="ws" id="s2"><div class="ws-header"><div class="ws-num">02</div><div class="ws-title-block"><div class="ws-label">Section Two</div><div class="ws-title">What Is AI?</div><div class="ws-complete-badge" id="badge-s2">Section completed</div></div></div>
-    <div class="exercise-block"><div class="block-label">⬡ Exercise — AI or Not AI?</div><p>Mark each scenario.</p>
+  <!-- S2 -->
+  <section class="ws" id="s2" data-section="2" data-locked="true">
+    <div class="ws-header">
+      <div class="ws-num">02</div>
+      <div class="ws-title-block">
+        <div class="ws-label">Section Two</div>
+        <div class="ws-title">What Is AI?</div>
+        <div class="ws-complete-badge" id="badge-s2">Section completed</div>
+      </div>
+    </div>
+    <div class="exercise-block">
+      <div class="block-label">⬡ Exercise — AI or Not AI?</div>
+      <p>Mark each scenario.</p>
       <ul class="scenario-list">
         <li><span>Software that automatically sends invoices to late payers</span><div class="toggle-group"><button class="toggle-btn" onclick="selectToggle(this,'ai','s2')">AI</button><button class="toggle-btn" onclick="selectToggle(this,'not','s2')">Not AI</button></div></li>
         <li><span>Elevator sensor that beeps when weight exceeds a threshold</span><div class="toggle-group"><button class="toggle-btn" onclick="selectToggle(this,'ai','s2')">AI</button><button class="toggle-btn" onclick="selectToggle(this,'not','s2')">Not AI</button></div></li>
@@ -174,11 +238,28 @@
         <li><span>Translation system that improves accuracy with each use</span><div class="toggle-group"><button class="toggle-btn" onclick="selectToggle(this,'ai','s2')">AI</button><button class="toggle-btn" onclick="selectToggle(this,'not','s2')">Not AI</button></div></li>
       </ul>
     </div>
-    <div class="reflection-block"><div class="block-label">◎ Reflection</div><p><strong>AI</strong> = learns, adapts, predicts &nbsp;·&nbsp; <strong>Automation</strong> = fixed rules</p><textarea id="s2_notes" data-track="s2" placeholder="Notes on the distinction..."></textarea></div>
-  </section><div class="divider"></div>
+    <div class="reflection-block">
+      <div class="block-label">◎ Reflection</div>
+      <p><strong>AI</strong> = learns, adapts, predicts &nbsp;·&nbsp; <strong>Automation</strong> = fixed rules</p>
+      <textarea id="s2_notes" data-track="s2" placeholder="Notes on the distinction..."></textarea>
+    </div>
+    <div class="unlock-nudge" id="nudge-s2">⬡ Section 3 is now unlocked. Scroll down to continue.</div>
+  </section>
+  <div class="divider" id="div-s2" style="display:none;"></div>
 
-  <section class="ws" id="s3"><div class="ws-header"><div class="ws-num">03</div><div class="ws-title-block"><div class="ws-label">Section Three</div><div class="ws-title">AI in Daily Life</div><div class="ws-complete-badge" id="badge-s3">Section completed</div></div></div>
-    <div class="exercise-block"><div class="block-label">⬡ Exercise — Poll</div><p>Which daily activities have you seen AI assist with?</p>
+  <!-- S3 -->
+  <section class="ws" id="s3" data-section="3" data-locked="true">
+    <div class="ws-header">
+      <div class="ws-num">03</div>
+      <div class="ws-title-block">
+        <div class="ws-label">Section Three</div>
+        <div class="ws-title">AI in Daily Life</div>
+        <div class="ws-complete-badge" id="badge-s3">Section completed</div>
+      </div>
+    </div>
+    <div class="exercise-block">
+      <div class="block-label">⬡ Exercise — Poll</div>
+      <p>Which daily activities have you seen AI assist with?</p>
       <ul class="check-list">
         <li><input type="checkbox" data-track="s3" onchange="scheduleSave()"> Navigation &amp; route planning</li>
         <li><input type="checkbox" data-track="s3" onchange="scheduleSave()"> Email suggestions or autocomplete</li>
@@ -189,11 +270,30 @@
         <li><input type="checkbox" data-track="s3" onchange="scheduleSave()"> <input class="answer-field" type="text" id="s3_custom" data-track="s3" placeholder="Add your own..."></li>
       </ul>
     </div>
-    <div class="reflection-block"><div class="block-label">◎ Reflection</div><p>One AI tool I use daily but rarely notice:</p><div class="field-line"><input type="text" id="s3_tool" data-track="s3" placeholder="Name the tool..."></div><p style="margin-top:0.75rem;">How would my day change without it?</p><textarea id="s3_reflection" data-track="s3" placeholder="Think about friction, time lost..."></textarea></div>
-  </section><div class="divider"></div>
+    <div class="reflection-block">
+      <div class="block-label">◎ Reflection</div>
+      <p>One AI tool I use daily but rarely notice:</p>
+      <div class="field-line"><input type="text" id="s3_tool" data-track="s3" placeholder="Name the tool..."></div>
+      <p style="margin-top:0.75rem;">How would my day change without it?</p>
+      <textarea id="s3_reflection" data-track="s3" placeholder="Think about friction, time lost..."></textarea>
+    </div>
+    <div class="unlock-nudge" id="nudge-s3">⬡ Section 4 is now unlocked. Scroll down to continue.</div>
+  </section>
+  <div class="divider" id="div-s3" style="display:none;"></div>
 
-  <section class="ws" id="s4"><div class="ws-header"><div class="ws-num">04</div><div class="ws-title-block"><div class="ws-label">Section Four</div><div class="ws-title">Opportunity Mapping</div><div class="ws-complete-badge" id="badge-s4">Section completed</div></div></div>
-    <div class="exercise-block"><div class="block-label">⬡ Exercise — AI Opportunity Matrix</div><p>List construction tasks then place them in the matrix.</p>
+  <!-- S4 -->
+  <section class="ws" id="s4" data-section="4" data-locked="true">
+    <div class="ws-header">
+      <div class="ws-num">04</div>
+      <div class="ws-title-block">
+        <div class="ws-label">Section Four</div>
+        <div class="ws-title">Opportunity Mapping</div>
+        <div class="ws-complete-badge" id="badge-s4">Section completed</div>
+      </div>
+    </div>
+    <div class="exercise-block">
+      <div class="block-label">⬡ Exercise — AI Opportunity Matrix</div>
+      <p>List construction tasks then place them in the matrix.</p>
       <div style="margin-bottom:1rem;"><p style="font-size:0.8rem;color:#888;font-family:'DM Mono',monospace;letter-spacing:0.05em;margin-bottom:0.3rem;">YOUR TASK LIST</p><textarea id="s4_tasks" data-track="s4" placeholder="e.g. Progress reporting, safety inspections, vendor follow-ups..." style="min-height:85px;"></textarea></div>
       <div class="matrix-grid">
         <div class="matrix-cell highlight"><div class="matrix-cell-title"><span class="dot dot-amber"></span> Quick Wins</div><div style="font-family:'DM Mono',monospace;font-size:0.58rem;color:#aaa;margin-bottom:0.5rem;">HIGH IMPACT · LOW EFFORT</div><textarea id="s4_qw" data-track="s4" placeholder="Easy high-value tasks..." style="min-height:80px;border:none;border-bottom:1px solid rgba(0,0,0,0.1);background:transparent;"></textarea></div>
@@ -203,11 +303,28 @@
       </div>
       <div class="axis-row" style="margin-top:0.4rem;"><span class="axis-label">← LOW EFFORT</span><span class="axis-label">HIGH EFFORT →</span></div>
     </div>
-    <div class="reflection-block"><div class="block-label">◎ Reflection</div><p>Which Quick Win will I try first and why?</p><textarea id="s4_reflection" data-track="s4" placeholder="Name the task, the AI tool, and your next step..."></textarea></div>
-  </section><div class="divider"></div>
+    <div class="reflection-block">
+      <div class="block-label">◎ Reflection</div>
+      <p>Which Quick Win will I try first and why?</p>
+      <textarea id="s4_reflection" data-track="s4" placeholder="Name the task, the AI tool, and your next step..."></textarea>
+    </div>
+    <div class="unlock-nudge" id="nudge-s4">⬡ Section 5 is now unlocked. Scroll down to continue.</div>
+  </section>
+  <div class="divider" id="div-s4" style="display:none;"></div>
 
-  <section class="ws" id="s5"><div class="ws-header"><div class="ws-num">05</div><div class="ws-title-block"><div class="ws-label">Section Five</div><div class="ws-title">Workflow Redesign</div><div class="ws-complete-badge" id="badge-s5">Section completed</div></div></div>
-    <div class="exercise-block"><div class="block-label">⬡ Exercise — Before vs After</div><p>Choose one construction workflow. Redesign it with AI.</p>
+  <!-- S5 -->
+  <section class="ws" id="s5" data-section="5" data-locked="true">
+    <div class="ws-header">
+      <div class="ws-num">05</div>
+      <div class="ws-title-block">
+        <div class="ws-label">Section Five</div>
+        <div class="ws-title">Workflow Redesign</div>
+        <div class="ws-complete-badge" id="badge-s5">Section completed</div>
+      </div>
+    </div>
+    <div class="exercise-block">
+      <div class="block-label">⬡ Exercise — Before vs After</div>
+      <p>Choose one construction workflow. Redesign it with AI.</p>
       <div style="margin-bottom:0.75rem;"><div style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;color:#999;margin-bottom:0.4rem;">WORKFLOW NAME</div><input type="text" id="s5_name" data-track="s5" placeholder="e.g. Weekly progress reporting..."></div>
       <div class="before-after">
         <div class="ba-col"><div class="ba-col-label">Before — Manual</div><textarea id="s5_before" data-track="s5" placeholder="Step-by-step: how it works today..." style="min-height:130px;border:1px solid rgba(0,0,0,0.1);"></textarea></div>
@@ -215,21 +332,54 @@
         <div class="ba-col after"><div class="ba-col-label">After — AI-Assisted</div><textarea id="s5_after" data-track="s5" placeholder="How AI transforms each step..." style="min-height:130px;border:1px solid rgba(0,0,0,0.1);"></textarea></div>
       </div>
     </div>
-    <div class="reflection-block"><div class="block-label">◎ Reflection</div><p>How does this redesign free me for higher-value leadership tasks?</p><textarea id="s5_reflection" data-track="s5" placeholder="Time reclaimed, decisions you can now focus on..."></textarea></div>
-  </section><div class="divider"></div>
-
-  <section class="ws" id="s6"><div class="ws-header"><div class="ws-num">06</div><div class="ws-title-block"><div class="ws-label">Section Six</div><div class="ws-title">Prompt Engineering</div><div class="ws-complete-badge" id="badge-s6">Section completed</div></div></div>
-    <div class="formula-banner"><span>FORMULA:</span> Action Verb &nbsp;+&nbsp; <span>Context</span> &nbsp;+&nbsp; Desired Output</div>
-    <div class="exercise-block"><div class="block-label">⬡ Exercise — Rewrite Vague Prompts</div><p>Transform weak prompts into strong ones.</p>
-      <div class="prompt-pair"><div class="prompt-box"><div class="prompt-box-label weak">✕ Weak #1</div><input type="text" id="s6_w1" data-track="s6" placeholder='e.g. "Write a report"'></div><div class="prompt-box strong"><div class="prompt-box-label strong-lbl">✓ Strong #1</div><input type="text" id="s6_s1" data-track="s6" placeholder='e.g. "Summarize weekly progress of Phase 2..."'></div></div>
-      <div class="prompt-pair"><div class="prompt-box"><div class="prompt-box-label weak">✕ Weak #2</div><input type="text" id="s6_w2" data-track="s6" placeholder='e.g. "Make a schedule"'></div><div class="prompt-box strong"><div class="prompt-box-label strong-lbl">✓ Strong #2</div><input type="text" id="s6_s2" data-track="s6" placeholder='e.g. "Create a 6-week schedule for..."'></div></div>
-      <div class="prompt-pair"><div class="prompt-box"><div class="prompt-box-label weak">✕ Weak #3</div><input type="text" id="s6_w3" data-track="s6" placeholder="Your own weak prompt..."></div><div class="prompt-box strong"><div class="prompt-box-label strong-lbl">✓ Strong #3</div><input type="text" id="s6_s3" data-track="s6" placeholder="Rewrite using the formula..."></div></div>
+    <div class="reflection-block">
+      <div class="block-label">◎ Reflection</div>
+      <p>How does this redesign free me for higher-value leadership tasks?</p>
+      <textarea id="s5_reflection" data-track="s5" placeholder="Time reclaimed, decisions you can now focus on..."></textarea>
     </div>
-    <div class="reflection-block"><div class="block-label">◎ Reflection</div><p>How does clarity change AI's usefulness?</p><textarea id="s6_reflection" data-track="s6" placeholder="Consider the analogy to giving instructions to a subcontractor..."></textarea></div>
-  </section><div class="divider"></div>
+    <div class="unlock-nudge" id="nudge-s5">⬡ Section 6 is now unlocked. Scroll down to continue.</div>
+  </section>
+  <div class="divider" id="div-s5" style="display:none;"></div>
 
-  <section class="ws" id="s7"><div class="ws-header"><div class="ws-num">07</div><div class="ws-title-block"><div class="ws-label">Section Seven</div><div class="ws-title">Leadership Alignment</div><div class="ws-complete-badge" id="badge-s7">Section completed</div></div></div>
-    <div class="exercise-block"><div class="block-label">⬡ Exercise — Chat Waterfall Scenario</div>
+  <!-- S6 -->
+  <section class="ws" id="s6" data-section="6" data-locked="true">
+    <div class="ws-header">
+      <div class="ws-num">06</div>
+      <div class="ws-title-block">
+        <div class="ws-label">Section Six</div>
+        <div class="ws-title">Prompt Engineering</div>
+        <div class="ws-complete-badge" id="badge-s6">Section completed</div>
+      </div>
+    </div>
+    <div class="formula-banner"><span>FORMULA:</span> Action Verb &nbsp;+&nbsp; <span>Context</span> &nbsp;+&nbsp; Desired Output</div>
+    <div class="exercise-block">
+      <div class="block-label">⬡ Exercise — Rewrite Vague Prompts</div>
+      <p>Transform weak prompts into strong ones.</p>
+      <div class="prompt-pair"><div class="prompt-box"><div class="prompt-box-label weak">✕ Weak #1</div><input type="text" id="s6_w1" data-track="s6" placeholder='e.g. "Write a report"'></div><div class="prompt-box strong"><div class="prompt-box-label strong-lbl">✓ Strong #1</div><input type="text" id="s6_s1" data-track="s6" placeholder='Rewrite with the formula...'></div></div>
+      <div class="prompt-pair"><div class="prompt-box"><div class="prompt-box-label weak">✕ Weak #2</div><input type="text" id="s6_w2" data-track="s6" placeholder='e.g. "Make a schedule"'></div><div class="prompt-box strong"><div class="prompt-box-label strong-lbl">✓ Strong #2</div><input type="text" id="s6_s2" data-track="s6" placeholder='Rewrite with the formula...'></div></div>
+      <div class="prompt-pair"><div class="prompt-box"><div class="prompt-box-label weak">✕ Weak #3</div><input type="text" id="s6_w3" data-track="s6" placeholder="Your own weak prompt..."></div><div class="prompt-box strong"><div class="prompt-box-label strong-lbl">✓ Strong #3</div><input type="text" id="s6_s3" data-track="s6" placeholder="Rewrite with the formula..."></div></div>
+    </div>
+    <div class="reflection-block">
+      <div class="block-label">◎ Reflection</div>
+      <p>How does clarity change AI's usefulness?</p>
+      <textarea id="s6_reflection" data-track="s6" placeholder="Consider the analogy to giving instructions to a subcontractor..."></textarea>
+    </div>
+    <div class="unlock-nudge" id="nudge-s6">⬡ Section 7 is now unlocked. Scroll down to continue.</div>
+  </section>
+  <div class="divider" id="div-s6" style="display:none;"></div>
+
+  <!-- S7 -->
+  <section class="ws" id="s7" data-section="7" data-locked="true">
+    <div class="ws-header">
+      <div class="ws-num">07</div>
+      <div class="ws-title-block">
+        <div class="ws-label">Section Seven</div>
+        <div class="ws-title">Leadership Alignment</div>
+        <div class="ws-complete-badge" id="badge-s7">Section completed</div>
+      </div>
+    </div>
+    <div class="exercise-block">
+      <div class="block-label">⬡ Exercise — Chat Waterfall Scenario</div>
       <div class="ai-scenario"><p>"Based on project data, I recommend cutting costs by reducing the safety staffing ratio on non-critical phases. This could save approximately 8% on labor overhead."</p></div>
       <p style="font-size:0.88rem;margin-bottom:0.75rem;">As a construction leader, how do you respond?</p>
       <div class="field-line" style="margin-bottom:0.6rem;"><label>INITIAL REACTION →</label><input type="text" id="s7_reaction" data-track="s7" placeholder="Your gut response..."></div>
@@ -238,21 +388,56 @@
       <p style="font-size:0.88rem;margin-top:0.75rem;margin-bottom:0.5rem;">My response as a leader:</p>
       <textarea id="s7_response" data-track="s7" placeholder="Write the action you would take and why..."></textarea>
     </div>
-    <div class="reflection-block"><div class="block-label">◎ Reflection</div><p>How do I balance efficiency with accountability?</p><textarea id="s7_reflection" data-track="s7" placeholder="Where is the line between optimizing and avoiding responsibility?"></textarea></div>
-  </section><div class="divider"></div>
+    <div class="reflection-block">
+      <div class="block-label">◎ Reflection</div>
+      <p>How do I balance efficiency with accountability?</p>
+      <textarea id="s7_reflection" data-track="s7" placeholder="Where is the line between optimizing and avoiding responsibility?"></textarea>
+    </div>
+    <div class="unlock-nudge" id="nudge-s7">⬡ Section 8 is now unlocked. Scroll down to continue.</div>
+  </section>
+  <div class="divider" id="div-s7" style="display:none;"></div>
 
-  <section class="ws" id="s8"><div class="ws-header"><div class="ws-num">08</div><div class="ws-title-block"><div class="ws-label">Section Eight</div><div class="ws-title">Action Planning</div><div class="ws-complete-badge" id="badge-s8">Section completed</div></div></div>
-    <div class="exercise-block"><div class="block-label">⬡ Exercise — My AI Action Plan</div>
+  <!-- S8 -->
+  <section class="ws" id="s8" data-section="8" data-locked="true">
+    <div class="ws-header">
+      <div class="ws-num">08</div>
+      <div class="ws-title-block">
+        <div class="ws-label">Section Eight</div>
+        <div class="ws-title">Action Planning</div>
+        <div class="ws-complete-badge" id="badge-s8">Section completed</div>
+      </div>
+    </div>
+    <div class="exercise-block">
+      <div class="block-label">⬡ Exercise — My AI Action Plan</div>
       <div class="action-row"><div class="action-tag">Quick Win</div><div><div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;color:#aaa;margin-bottom:0.3rem;">ONE PERSONAL ACTION THIS WEEK</div><input type="text" id="s8_qw" data-track="s8" placeholder="Specific task, tool, and target date..."></div></div>
       <div class="action-row"><div class="action-tag team">Team</div><div style="width:100%"><div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;color:#aaa;margin-bottom:0.3rem;">2–3 TEAM ACTIONS</div><input type="text" id="s8_t1" data-track="s8" placeholder="Action 1..." style="margin-bottom:0.4rem;"><input type="text" id="s8_t2" data-track="s8" placeholder="Action 2..." style="margin-bottom:0.4rem;"><input type="text" id="s8_t3" data-track="s8" placeholder="Action 3 (optional)..."></div></div>
       <div class="action-row"><div class="action-tag res">Resources</div><div style="width:100%"><div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;color:#aaa;margin-bottom:0.3rem;">TOOLS, TRAINING, OR SUPPORT NEEDED</div><textarea id="s8_resources" data-track="s8" placeholder="Software access, budget approval, training sessions..." style="min-height:60px;"></textarea></div></div>
     </div>
-    <div class="reflection-block"><div class="block-label">◎ Reflection</div><p>What support do I need to take AI forward?</p><textarea id="s8_reflection" data-track="s8" placeholder="Internal champions, skill gaps, change management..."></textarea></div>
-  </section><div class="divider"></div>
+    <div class="reflection-block">
+      <div class="block-label">◎ Reflection</div>
+      <p>What support do I need to take AI forward?</p>
+      <textarea id="s8_reflection" data-track="s8" placeholder="Internal champions, skill gaps, change management..."></textarea>
+    </div>
+    <div class="unlock-nudge" id="nudge-s8">⬡ Final section unlocked. You're almost done!</div>
+  </section>
+  <div class="divider" id="div-s8" style="display:none;"></div>
 
-  <section class="ws" id="s9"><div class="ws-header"><div class="ws-num">09</div><div class="ws-title-block"><div class="ws-label">Section Nine</div><div class="ws-title">Closing Reflection</div><div class="ws-complete-badge" id="badge-s9">Section completed</div></div></div>
-    <div class="exercise-block"><div class="block-label">⬡ Exercise — Today's Takeaway</div>
-      <div class="closing-grid"><div class="closing-card"><p>One word about today</p><input type="text" id="s9_word" data-track="s9" placeholder="Your word..."></div><div class="closing-card commit"><p>My AI commitment this week</p><input type="text" id="s9_commit" data-track="s9" placeholder="One specific action..."></div></div>
+  <!-- S9 -->
+  <section class="ws" id="s9" data-section="9" data-locked="true">
+    <div class="ws-header">
+      <div class="ws-num">09</div>
+      <div class="ws-title-block">
+        <div class="ws-label">Section Nine</div>
+        <div class="ws-title">Closing Reflection</div>
+        <div class="ws-complete-badge" id="badge-s9">Section completed</div>
+      </div>
+    </div>
+    <div class="exercise-block">
+      <div class="block-label">⬡ Exercise — Today's Takeaway</div>
+      <div class="closing-grid">
+        <div class="closing-card"><p>One word about today</p><input type="text" id="s9_word" data-track="s9" placeholder="Your word..."></div>
+        <div class="closing-card commit"><p>My AI commitment this week</p><input type="text" id="s9_commit" data-track="s9" placeholder="One specific action..."></div>
+      </div>
     </div>
     <div class="reflection-block" style="border-left-color:var(--amber);background:rgba(232,160,32,0.06);">
       <div class="block-label" style="color:var(--amber);">◎ Final Reflection</div>
@@ -266,70 +451,153 @@
       <div><div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;color:#aaa;margin-bottom:0.4rem;">FACILITATOR INITIALS</div><div style="border-bottom:1px solid rgba(0,0,0,0.2);height:30px;"></div></div>
     </div>
   </section>
+
 </main>
 
 <script>
-  // ── SUPABASE CONFIG ──────────────────────────────────────────────
+  // ── SUPABASE ─────────────────────────────────────────────────────
   const SUPABASE_URL = 'https://jowbeghgcqxflrkemljc.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_unHWL4BqjheIFwbnENyY0w_H0kB5UxA';
   const TABLE = 'workbook_progress';
 
   async function supabaseUpsert(payload) {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Prefer': 'resolution=merge-duplicates,return=minimal'
-      },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) {
-      const err = await res.text();
-      console.warn('Supabase upsert error:', err);
-    }
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}`, 'Prefer':'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify(payload)
+      });
+    } catch(e) { console.warn('Save error', e); }
   }
 
-  // ── TRACKING ENGINE ──────────────────────────────────────────────
+  // ── UNLOCK THRESHOLDS ────────────────────────────────────────────
+  // Minimum filled fields required in section N to unlock section N+1
+  const UNLOCK_THRESHOLD = {
+    1: 1,  // S1: just the word field
+    2: 2,  // S2: at least 2 toggles answered + notes
+    3: 2,  // S3: tool field + reflection
+    4: 2,  // S4: task list + one quadrant
+    5: 2,  // S5: workflow name + before
+    6: 2,  // S6: at least one weak+strong pair
+    7: 2,  // S7: reaction + questions
+    8: 2,  // S8: quick win + one team action
+  };
+
+  // ── STATE ────────────────────────────────────────────────────────
   let participantId = null;
   let participantName = '';
   let saveTimer = null;
+  let unlockedSections = new Set([1]); // S1 always open
 
-  function slugify(name) {
-    return name.trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'').slice(0,40);
+  // ── SECTION PROGRESS ─────────────────────────────────────────────
+  function countFilled(sectionId) {
+    const sec = document.getElementById(sectionId);
+    if (!sec) return 0;
+    let filled = 0;
+    sec.querySelectorAll('input[data-track]:not([type="checkbox"]), textarea[data-track]').forEach(el => {
+      if (el.value.trim().length > 2) filled++;
+    });
+    sec.querySelectorAll('input[type="checkbox"][data-track]').forEach(cb => {
+      if (cb.checked) filled++;
+    });
+    sec.querySelectorAll('.toggle-group').forEach(g => {
+      if (g.querySelector('.selected-ai,.selected-not')) filled++;
+    });
+    return filled;
   }
 
-  function getSectionProgress() {
-    const p = {};
+  function getSectionPct(sectionId) {
+    const sec = document.getElementById(sectionId);
+    if (!sec) return 0;
+    let filled = 0, total = 0;
+    sec.querySelectorAll('input[data-track]:not([type="checkbox"]), textarea[data-track]').forEach(el => { total++; if (el.value.trim().length > 2) filled++; });
+    sec.querySelectorAll('input[type="checkbox"][data-track]').forEach(cb => { total++; if (cb.checked) filled++; });
+    sec.querySelectorAll('.toggle-group').forEach(g => { total++; if (g.querySelector('.selected-ai,.selected-not')) filled++; });
+    return total > 0 ? Math.round((filled / total) * 100) : 0;
+  }
+
+  // ── UNLOCK LOGIC ─────────────────────────────────────────────────
+  function checkUnlocks() {
+    for (let i = 1; i <= 8; i++) {
+      const nextId = i + 1;
+      if (unlockedSections.has(nextId)) continue; // already unlocked
+
+      const threshold = UNLOCK_THRESHOLD[i] || 1;
+      const filled = countFilled('s' + i);
+
+      if (filled >= threshold) {
+        unlockSection(nextId);
+      }
+
+      // Show nudge on current section if threshold met but next not yet unlocked
+      const nudge = document.getElementById('nudge-s' + i);
+      if (nudge) nudge.classList.toggle('show', filled >= threshold);
+    }
+
+    // Update badges and progress bar
+    updateBadgesAndProgress();
+  }
+
+  function unlockSection(n) {
+    if (unlockedSections.has(n)) return;
+    unlockedSections.add(n);
+
+    const sec = document.getElementById('s' + n);
+    const divider = document.getElementById('div-s' + (n - 1));
+    const tocItem = document.getElementById('toc-s' + n);
+
+    if (sec) {
+      sec.setAttribute('data-locked', 'false');
+      sec.style.display = '';
+      // Trigger animation after a frame
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          sec.classList.add('unlocking');
+          sec.classList.add('visible');
+          setTimeout(() => sec.classList.remove('unlocking'), 700);
+        });
+      });
+    }
+    if (divider) divider.style.display = '';
+    if (tocItem) tocItem.classList.remove('locked');
+
+    // Hide the nudge on previous section once next is unlocked
+    const prevNudge = document.getElementById('nudge-s' + (n - 1));
+    if (prevNudge) prevNudge.classList.remove('show');
+  }
+
+  function updateBadgesAndProgress() {
+    let totalPct = 0;
+    const sections = [];
     for (let i = 1; i <= 9; i++) {
-      const sec = document.getElementById('s'+i);
-      if (!sec) continue;
-      const inputs = sec.querySelectorAll('input[data-track]:not([type="checkbox"]), textarea[data-track]');
-      const checkboxes = sec.querySelectorAll('input[type="checkbox"][data-track]');
-      const toggleGroups = sec.querySelectorAll('.toggle-group');
-      let filled = 0, total = 0;
-      inputs.forEach(el => { total++; if (el.value.trim().length > 2) filled++; });
-      checkboxes.forEach(cb => { total++; if (cb.checked) filled++; });
-      toggleGroups.forEach(g => { total++; if (g.querySelector('.selected-ai,.selected-not')) filled++; });
-      const pct = total > 0 ? Math.round((filled/total)*100) : 0;
-      p['s'+i] = { pct, filled, total };
-      const badge = document.getElementById('badge-s'+i);
+      const pct = getSectionPct('s' + i);
+      sections.push({ pct });
+      totalPct += pct;
+      const badge = document.getElementById('badge-s' + i);
       if (badge) badge.classList.toggle('show', pct >= 60);
     }
-    return p;
+    // Scroll progress bar reflects overall
+    const overall = Math.round(totalPct / 9);
+    document.getElementById('progressBar').style.width = overall + '%';
+    return sections;
   }
 
+  // ── SAVE TO SUPABASE ─────────────────────────────────────────────
   function scheduleSave() {
+    checkUnlocks();
+    if (!participantId) return;
     clearTimeout(saveTimer);
     saveTimer = setTimeout(doSave, 1000);
   }
 
   async function doSave() {
-    if (!participantId || !participantName) return;
-    const sections = getSectionProgress();
-    const overall = Math.round(Object.values(sections).reduce((a,b)=>a+b.pct,0)/9);
-    const payload = {
+    if (!participantId) return;
+    const sections = {};
+    for (let i = 1; i <= 9; i++) {
+      sections['s' + i] = { pct: getSectionPct('s' + i) };
+    }
+    const overall = Math.round(Object.values(sections).reduce((a, b) => a + b.pct, 0) / 9);
+    await supabaseUpsert({
       id: participantId,
       name: participantName,
       org: document.getElementById('coverOrg').value || '',
@@ -339,59 +607,65 @@
       closing_word: document.getElementById('s9_word')?.value || '',
       commitment: document.getElementById('s9_commit')?.value || '',
       last_seen: new Date().toISOString()
-    };
-    await supabaseUpsert(payload);
+    });
   }
 
+  // ── REGISTRATION ─────────────────────────────────────────────────
   async function registerParticipant(name) {
     if (!name || name.trim().length < 2) return;
     participantName = name.trim();
-    participantId = slugify(participantName) + '-' + Date.now().toString(36).slice(-4);
+    participantId = name.trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'').slice(0,40) + '-' + Date.now().toString(36).slice(-4);
     const status = document.getElementById('regStatus');
-    status.textContent = '✓ Registered as "' + participantName + '" — progress is being tracked live';
+    status.textContent = '✓ Registered as "' + participantName + '" — complete each section to unlock the next';
     status.classList.add('ok');
     await doSave();
   }
 
   // ── INIT ─────────────────────────────────────────────────────────
-  document.getElementById('coverDate').value = new Date().toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('coverDate').value = new Date().toLocaleDateString('en-PH', {year:'numeric',month:'long',day:'numeric'});
 
-  document.getElementById('coverName').addEventListener('blur', function() {
-    if (this.value.trim() && !participantId) registerParticipant(this.value);
-  });
-  document.getElementById('coverName').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !participantId) registerParticipant(this.value);
-  });
+  // Register on name entry
+  const nameEl = document.getElementById('coverName');
+  nameEl.addEventListener('blur', () => { if (nameEl.value.trim() && !participantId) registerParticipant(nameEl.value); });
+  nameEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !participantId) registerParticipant(nameEl.value); });
 
+  // Track all inputs
   document.querySelectorAll('[data-track]').forEach(el => {
     el.addEventListener('input', scheduleSave);
     el.addEventListener('change', scheduleSave);
   });
 
+  // Scroll updates progress bar
   window.addEventListener('scroll', () => {
-    const pct = (window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
-    document.getElementById('progressBar').style.width = pct+'%';
     scheduleSave();
   });
 
-  const obs = new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.08});
-  document.querySelectorAll('.ws').forEach(el=>obs.observe(el));
+  // TOC active highlight
+  const tocObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        document.querySelectorAll('.toc-item').forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.ws').forEach(s => tocObs.observe(s));
 
-  const tocObs = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;document.querySelectorAll('.toc-item').forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+id));}});
-  },{threshold:0.3});
-  document.querySelectorAll('.ws').forEach(s=>tocObs.observe(s));
-
+  // Toggle buttons
   function selectToggle(btn, type, section) {
     const group = btn.closest('.toggle-group');
-    group.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('selected-ai','selected-not'));
-    btn.classList.add(type==='ai'?'selected-ai':'selected-not');
+    group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected-ai','selected-not'));
+    btn.classList.add(type === 'ai' ? 'selected-ai' : 'selected-not');
     scheduleSave();
   }
 
-  document.querySelectorAll('textarea').forEach(ta=>{
-    ta.addEventListener('input',function(){this.style.height='auto';this.style.height=this.scrollHeight+'px';});
+  // Auto-resize textareas
+  document.querySelectorAll('textarea').forEach(ta => {
+    ta.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; });
   });
+
+  // Run initial unlock check (in case of page reload with saved state)
+  checkUnlocks();
 </script>
 </body>
 </html>
