@@ -23,7 +23,9 @@
   .cover-subtitle { font-size:1rem; font-weight:400; color:var(--mist); margin-top:1.5rem; max-width:420px; }
   .cover-meta { display:flex; gap:2.5rem; align-items:flex-end; flex-wrap:wrap; }
   .cover-meta-item label { display:block; font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--amber); margin-bottom:0.35rem; }
-  .cover-meta-item input { background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.25); color:#ffffff; font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:400; padding:0.2rem 0; width:180px; outline:none; transition:border-color 0.2s; }
+  .cover-meta-item input { background:transparent !important; border:none !important; border-bottom:1px solid rgba(255,255,255,0.25) !important; color:#ffffff !important; font-family:'DM Sans',sans-serif !important; font-size:0.9rem !important; font-weight:400 !important; padding:0.2rem 0 !important; width:180px !important; outline:none !important; transition:border-color 0.2s; }
+  .cover-meta-item input::placeholder { color:rgba(255,255,255,0.55) !important; }
+  #coverName, #coverOrg, #coverDate { color:#ffffff !important; }
   .cover-meta-item input:focus { border-bottom-color:var(--amber); }
   .cover-meta-item input::placeholder { color:rgba(255,255,255,0.5); }
   .section-count { font-family:'DM Mono',monospace; font-size:0.65rem; color:rgba(255,255,255,0.3); letter-spacing:0.1em; }
