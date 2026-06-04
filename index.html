@@ -455,6 +455,17 @@
     </div>
   </section>
 
+  <!-- MY RESPONSES SUMMARY -->
+  <div id="myResponsesPanel" style="display:none; margin-top:3rem;">
+    <div style="background:var(--ink);color:var(--chalk);padding:2rem 2.5rem 1.5rem;position:relative;">
+      <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);margin-bottom:0.5rem;">Your Workshop Summary</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:0.04em;line-height:1;">My Responses</div>
+      <div style="font-size:0.85rem;color:var(--mist);margin-top:0.5rem;">A record of everything you wrote today.</div>
+      <button onclick="printMyReport()" style="position:absolute;top:2rem;right:2.5rem;background:var(--amber);color:var(--ink);border:none;padding:0.5rem 1.2rem;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;font-weight:600;">⎙ Print My Report</button>
+    </div>
+    <div id="myResponsesContent" style="background:white;padding:2rem 2.5rem;border:1px solid rgba(0,0,0,0.08);border-top:none;"></div>
+  </div>
+
 </main>
 
 <script>
@@ -593,6 +604,36 @@
     saveTimer = setTimeout(doSave, 1000);
   }
 
+  function gatherResponses() {
+    const v = id => document.getElementById(id)?.value || '';
+    const checked = sel => {
+      const boxes = document.querySelectorAll(sel);
+      const vals = [];
+      boxes.forEach(cb => { if (cb.checked) vals.push(cb.closest('li')?.textContent?.trim() || '✓'); });
+      return vals.join(', ');
+    };
+    const toggleAnswers = sec => {
+      const answers = [];
+      document.querySelectorAll('#'+sec+' .scenario-list li').forEach(li => {
+        const q = li.querySelector('span')?.textContent?.trim() || '';
+        const sel = li.querySelector('.selected-ai') ? 'AI' : li.querySelector('.selected-not') ? 'Not AI' : '—';
+        answers.push(q + ' → ' + sel);
+      });
+      return answers.join(' | ');
+    };
+    return {
+      s1: { word: v('s1_word'), reflection: v('s1_reflection') },
+      s2: { scenarios: toggleAnswers('s2'), notes: v('s2_notes') },
+      s3: { checked: checked('#s3 input[type="checkbox"]'), custom: v('s3_custom'), tool: v('s3_tool'), reflection: v('s3_reflection') },
+      s4: { tasks: v('s4_tasks'), quick_wins: v('s4_qw'), strategic: v('s4_sp'), piloting: v('s4_wp'), nice_to_have: v('s4_nth'), reflection: v('s4_reflection') },
+      s5: { workflow: v('s5_name'), before: v('s5_before'), after: v('s5_after'), reflection: v('s5_reflection') },
+      s6: { weak1: v('s6_w1'), strong1: v('s6_s1'), weak2: v('s6_w2'), strong2: v('s6_s2'), weak3: v('s6_w3'), strong3: v('s6_s3'), reflection: v('s6_reflection') },
+      s7: { reaction: v('s7_reaction'), questions: v('s7_questions'), response: v('s7_response'), reflection: v('s7_reflection') },
+      s8: { quick_win: v('s8_qw'), team1: v('s8_t1'), team2: v('s8_t2'), team3: v('s8_t3'), resources: v('s8_resources'), reflection: v('s8_reflection') },
+      s9: { word: v('s9_word'), commitment: v('s9_commit'), reflection: v('s9_reflection') }
+    };
+  }
+
   async function doSave() {
     if (!participantId) return;
     const sections = {};
@@ -606,11 +647,13 @@
       org: document.getElementById('coverOrg').value || '',
       overall,
       sections,
+      responses: gatherResponses(),
       quick_win: document.getElementById('s8_qw')?.value || '',
       closing_word: document.getElementById('s9_word')?.value || '',
       commitment: document.getElementById('s9_commit')?.value || '',
       last_seen: new Date().toISOString()
     });
+    updateMyResponses();
   }
 
   // ── REGISTRATION ─────────────────────────────────────────────────
@@ -669,6 +712,117 @@
 
   // Run initial unlock check (in case of page reload with saved state)
   checkUnlocks();
+  // ── MY RESPONSES PANEL ───────────────────────────────────────────
+  const SECTION_LABELS = {
+    s1: { title:'01 · Icebreaker', fields:[['word','My Word'],['reflection','Reflection']] },
+    s2: { title:'02 · What Is AI?', fields:[['scenarios','AI / Not AI Answers'],['notes','Notes']] },
+    s3: { title:'03 · AI in Daily Life', fields:[['checked','Activities checked'],['custom','My own example'],['tool','AI tool I use daily'],['reflection','Reflection']] },
+    s4: { title:'04 · Opportunity Mapping', fields:[['tasks','My Task List'],['quick_wins','Quick Wins'],['strategic','Strategic Projects'],['piloting','Worth Piloting'],['nice_to_have','Nice-to-Haves'],['reflection','Reflection']] },
+    s5: { title:'05 · Workflow Redesign', fields:[['workflow','Workflow Name'],['before','Before (Manual)'],['after','After (AI-Assisted)'],['reflection','Reflection']] },
+    s6: { title:'06 · Prompt Engineering', fields:[['weak1','Weak Prompt 1'],['strong1','Strong Prompt 1'],['weak2','Weak Prompt 2'],['strong2','Strong Prompt 2'],['weak3','Weak Prompt 3'],['strong3','Strong Prompt 3'],['reflection','Reflection']] },
+    s7: { title:'07 · Leadership Alignment', fields:[['reaction','Initial Reaction'],['questions','Questions I'd Ask'],['response','My Response as Leader'],['reflection','Reflection']] },
+    s8: { title:'08 · Action Planning', fields:[['quick_win','Quick Win'],['team1','Team Action 1'],['team2','Team Action 2'],['team3','Team Action 3'],['resources','Resources Needed'],['reflection','Reflection']] },
+    s9: { title:'09 · Closing', fields:[['word','My Word for Today'],['commitment','AI Commitment'],['reflection','Final Reflection']] }
+  };
+
+  function updateMyResponses() {
+    const panel = document.getElementById('myResponsesPanel');
+    const content = document.getElementById('myResponsesContent');
+    if (!participantId) return;
+
+    // Show panel only if at least S9 is partially filled or overall > 50%
+    const overall = Math.round(Array.from({length:9},(_,i)=>getSectionPct('s'+(i+1))).reduce((a,b)=>a+b,0)/9);
+    if (overall < 10) return;
+    panel.style.display = 'block';
+
+    const r = gatherResponses();
+    let html = '';
+    Object.entries(SECTION_LABELS).forEach(([key, sec]) => {
+      const sectionR = r[key] || {};
+      const hasAny = sec.fields.some(([fk]) => sectionR[fk]?.trim());
+      if (!hasAny) return;
+      html += `<div style="margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid rgba(0,0,0,0.07);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.06em;color:var(--steel);margin-bottom:1rem;">${sec.title}</div>`;
+      sec.fields.forEach(([fk, label]) => {
+        const val = sectionR[fk]?.trim();
+        if (!val) return;
+        html += `<div style="margin-bottom:0.75rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:#aaa;margin-bottom:0.25rem;">${label}</div>
+          <div style="font-size:0.88rem;color:var(--ink);line-height:1.6;white-space:pre-wrap;">${val}</div>
+        </div>`;
+      });
+      html += '</div>';
+    });
+
+    if (!html) html = '<div style="color:#aaa;font-style:italic;font-size:0.88rem;">Fill in sections above to see your responses here.</div>';
+    content.innerHTML = html;
+  }
+
+  function printMyReport() {
+    const name = participantName || document.getElementById('coverName').value || 'Participant';
+    const org = document.getElementById('coverOrg').value || '';
+    const date = document.getElementById('coverDate').value || new Date().toLocaleDateString();
+    const r = gatherResponses();
+    let body = '';
+    Object.entries(SECTION_LABELS).forEach(([key, sec]) => {
+      const sectionR = r[key] || {};
+      const hasAny = sec.fields.some(([fk]) => sectionR[fk]?.trim());
+      if (!hasAny) return;
+      body += `<div class="section"><div class="sec-title">${sec.title}</div>`;
+      sec.fields.forEach(([fk, label]) => {
+        const val = sectionR[fk]?.trim();
+        if (!val) return;
+        body += `<div class="field"><div class="field-label">${label}</div><div class="field-val">${val.replace(/
+/g,'<br>')}</div></div>`;
+      });
+      body += '</div>';
+    });
+
+    const win = window.open('', '_blank');
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>Workshop Report — ${name}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{font-family:'DM Sans',sans-serif;font-weight:300;color:#1a1a18;padding:3rem;max-width:800px;margin:0 auto;}
+      .cover{background:#1a1a18;color:#f5f2ea;padding:2.5rem;margin-bottom:2.5rem;position:relative;}
+      .cover::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,#e8a020,#c0440a);}
+      .report-tag{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:#e8a020;margin-bottom:0.75rem;}
+      .report-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.04em;line-height:1;margin-bottom:1.2rem;}
+      .report-title span{color:#e8a020;}
+      .meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:1.5rem;}
+      .meta-item label{display:block;font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:#e8a020;margin-bottom:0.25rem;}
+      .meta-item span{font-size:0.95rem;font-weight:400;}
+      .section{margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid rgba(0,0,0,0.08);}
+      .sec-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.06em;color:#3d5a6e;margin-bottom:1rem;padding-bottom:0.4rem;border-bottom:2px solid #e8a020;}
+      .field{margin-bottom:0.9rem;}
+      .field-label{font-family:'DM Mono',monospace;font-size:0.57rem;letter-spacing:0.14em;text-transform:uppercase;color:#aaa;margin-bottom:0.25rem;}
+      .field-val{font-size:0.88rem;line-height:1.65;color:#1a1a18;}
+      .footer{margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,0.1);display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;}
+      .sig-line{border-bottom:1px solid rgba(0,0,0,0.2);height:28px;margin-top:0.4rem;}
+      .sig-label{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.14em;color:#aaa;}
+      @media print{body{padding:1.5rem;} @page{margin:1.5cm;}}
+    </style></head><body>
+    <div class="cover">
+      <div class="report-tag">Workshop Report · Leading With AI</div>
+      <div class="report-title">My <span>AI</span><br>Action Plan</div>
+      <div class="meta-grid">
+        <div class="meta-item"><label>Participant</label><span>${name}</span></div>
+        <div class="meta-item"><label>Organization</label><span>${org||'—'}</span></div>
+        <div class="meta-item"><label>Date</label><span>${date}</span></div>
+      </div>
+    </div>
+    ${body}
+    <div class="footer">
+      <div><div class="sig-label">SIGNATURE</div><div class="sig-line"></div></div>
+      <div><div class="sig-label">DATE</div><div class="sig-line"></div></div>
+      <div><div class="sig-label">FACILITATOR INITIALS</div><div class="sig-line"></div></div>
+    </div>
+    <script>window.onload=()=>window.print();<\/script>
+    </body></html>`);
+    win.document.close();
+  }
+
 </script>
 </body>
 </html>
