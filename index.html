@@ -48,7 +48,7 @@
 
   /* SECTION */
   .ws { margin-bottom:3.5rem; scroll-margin-top:3rem; }
-  .ws[data-locked="true"] { display:none; }
+  .ws.locked { display:none; }
   .ws.unlocking { animation: sectionReveal 0.6s ease forwards; }
   @keyframes sectionReveal {
     from { opacity:0; transform:translateY(24px); }
@@ -221,7 +221,7 @@
   <div class="divider" id="div-s1" style="display:none;"></div>
 
   <!-- S2 -->
-  <section class="ws" id="s2" data-section="2" data-locked="true">
+  <section class="ws locked" id="s2" data-section="2" data-locked="true">
     <div class="ws-header">
       <div class="ws-num">02</div>
       <div class="ws-title-block">
@@ -251,7 +251,7 @@
   <div class="divider" id="div-s2" style="display:none;"></div>
 
   <!-- S3 -->
-  <section class="ws" id="s3" data-section="3" data-locked="true">
+  <section class="ws locked" id="s3" data-section="3" data-locked="true">
     <div class="ws-header">
       <div class="ws-num">03</div>
       <div class="ws-title-block">
@@ -285,7 +285,7 @@
   <div class="divider" id="div-s3" style="display:none;"></div>
 
   <!-- S4 -->
-  <section class="ws" id="s4" data-section="4" data-locked="true">
+  <section class="ws locked" id="s4" data-section="4" data-locked="true">
     <div class="ws-header">
       <div class="ws-num">04</div>
       <div class="ws-title-block">
@@ -316,7 +316,7 @@
   <div class="divider" id="div-s4" style="display:none;"></div>
 
   <!-- S5 -->
-  <section class="ws" id="s5" data-section="5" data-locked="true">
+  <section class="ws locked" id="s5" data-section="5" data-locked="true">
     <div class="ws-header">
       <div class="ws-num">05</div>
       <div class="ws-title-block">
@@ -345,7 +345,7 @@
   <div class="divider" id="div-s5" style="display:none;"></div>
 
   <!-- S6 -->
-  <section class="ws" id="s6" data-section="6" data-locked="true">
+  <section class="ws locked" id="s6" data-section="6" data-locked="true">
     <div class="ws-header">
       <div class="ws-num">06</div>
       <div class="ws-title-block">
@@ -372,7 +372,7 @@
   <div class="divider" id="div-s6" style="display:none;"></div>
 
   <!-- S7 -->
-  <section class="ws" id="s7" data-section="7" data-locked="true">
+  <section class="ws locked" id="s7" data-section="7" data-locked="true">
     <div class="ws-header">
       <div class="ws-num">07</div>
       <div class="ws-title-block">
@@ -401,7 +401,7 @@
   <div class="divider" id="div-s7" style="display:none;"></div>
 
   <!-- S8 -->
-  <section class="ws" id="s8" data-section="8" data-locked="true">
+  <section class="ws locked" id="s8" data-section="8" data-locked="true">
     <div class="ws-header">
       <div class="ws-num">08</div>
       <div class="ws-title-block">
@@ -426,7 +426,7 @@
   <div class="divider" id="div-s8" style="display:none;"></div>
 
   <!-- S9 -->
-  <section class="ws" id="s9" data-section="9" data-locked="true">
+  <section class="ws locked" id="s9" data-section="9" data-locked="true">
     <div class="ws-header">
       <div class="ws-num">09</div>
       <div class="ws-title-block">
@@ -556,26 +556,22 @@
     if (unlockedSections.has(n)) return;
     unlockedSections.add(n);
 
-    const sec = document.getElementById('s' + n);
+    const sec     = document.getElementById('s' + n);
     const divider = document.getElementById('div-s' + (n - 1));
     const tocItem = document.getElementById('toc-s' + n);
 
     if (sec) {
-      sec.setAttribute('data-locked', 'false');
-      sec.style.display = '';
-      // Trigger animation after a frame
+      sec.classList.remove('locked');          // removes display:none via CSS
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          sec.classList.add('unlocking');
-          sec.classList.add('visible');
+          sec.classList.add('unlocking', 'visible');
           setTimeout(() => sec.classList.remove('unlocking'), 700);
         });
       });
     }
     if (divider) divider.style.display = '';
-    if (tocItem) tocItem.classList.remove('locked');
+    if (tocItem)  tocItem.classList.remove('locked');
 
-    // Hide the nudge on previous section once next is unlocked
     const prevNudge = document.getElementById('nudge-s' + (n - 1));
     if (prevNudge) prevNudge.classList.remove('show');
   }
